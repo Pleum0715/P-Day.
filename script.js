@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // ประกาศตัวเล่นเพลงตัวเดียวที่นี่
   let audio = new Audio('My Day.mp3');
 
-  // --- แก้ไขข้อมูลเนื้อเพลง (เรียงใหม่ให้ถูกต้อง) ---
+  // --- ข้อมูลเนื้อเพลง (ยึดตามที่คุณแปะมาล่าสุด) ---
   const lyricsData = [
     { time: 0, text: " (Music Intro)" },
     { time: 11.18, text: "I wait for you to come home" },
@@ -82,12 +82,21 @@ document.addEventListener("DOMContentLoaded", function () {
     updateCandleCount();
   }
 
+  // --- แก้ไขส่วนการคลิกปักเทียน (ให้รองรับมือถือที่ย่อจอ) ---
   cake.addEventListener("click", function (event) {
     const rect = cake.getBoundingClientRect();
-    const left = event.clientX - rect.left;
-    const top = event.clientY - rect.top;
+    
+    // คำนวณ Scale Factor (หาอัตราส่วนการย่อขยาย)
+    const scaleX = rect.width / cake.offsetWidth;
+    const scaleY = rect.height / cake.offsetHeight;
+
+    // คำนวณตำแหน่งที่ถูกต้องโดยการหารด้วย scale
+    const left = (event.clientX - rect.left) / scaleX;
+    const top = (event.clientY - rect.top) / scaleY;
+
     addCandle(left, top);
   });
+  // -----------------------------------------------------
 
   function isBlowing() {
     const bufferLength = analyser.frequencyBinCount;
